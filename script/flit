@@ -38,9 +38,21 @@ die "No target to flit" unless $target;
             die "Do now know hot to flit jquery target ($target) for version ($version)";
         }
 
+        if (0) {
         warn "Flit jquery\n";
         warn "min\n" if $min;
         warn "version: $version\n";
+        }
+
+        my $uri = "http://ajax.googleapis.com/ajax/libs/jquery/$version/jquery";
+        $uri .= ".min" if $min;
+        $uri .= ".js";
+
+        my $response = $agent->get( $uri );
+
+        die "Unable to get URI ($uri)" unless $response->is_success;
+        print $response->content;
+
     }
     else {
         die "Do not know how to flit target ($target)";
