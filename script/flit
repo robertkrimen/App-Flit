@@ -19,6 +19,18 @@ sub fetch {
     print $response->content;
 }
 
+sub parse_digitdot_version {
+
+    local $_ = shift;
+
+    s/\b([\d\.\- ]+)\b//; my $version = $1;
+    $version = 1 unless defined $version && length $version;
+    s/^\s*//, s/\s*$// for $version;
+    $version =~ s/[\.\- ]+/\./g; # Normalize version
+
+    return ( $_, $version );
+}
+
 {
     local $_ = $target;
     if ( 0 ) {
@@ -26,27 +38,16 @@ sub fetch {
     elsif ( s/^\s*jquery-*ui[-\s]*// ) {
         my $min = s/(?<=\d)?min\b//i;
 
-        s/\b([\d\.\- ]+)\b//; my $version = $1;
-        $version = 1 unless defined $version && length $version;
-        s/^\s*//, s/\s*$// for $version;
-        $version =~ s/[\.\- ]+/\./g; # Normalize version
+        my $version;
+        ( $_, $version ) = parse_digitdot_version $_;
 
         die "Do not know how to flit jquery target ($target)" if m/[^- ]+/;
 
-        if ( $version eq '1' ) {
-        }
-        elsif ( $version =~ m/^1\.[567]$/ ) {
-        }
-        elsif ( grep { $version eq $_ } qw/ 1.5.2 1.5.3 1.6 1.7.0 1.7.1 1.7.2 / ) {
-        }
+        if ( $version eq '1' ) {}
+        elsif ( $version =~ m/^1\.[567]$/ ) {}
+        elsif ( grep { $version eq $_ } qw/ 1.5.2 1.5.3 1.6 1.7.0 1.7.1 1.7.2 / ) {}
         else {
             die "Do not know hot to flit jquery ui target ($target) for version ($version)";
-        }
-
-        if (0) {
-        warn "Flit jquery\n";
-        warn "min\n" if $min;
-        warn "version: $version\n";
         }
 
         my $uri = "http://ajax.googleapis.com/ajax/libs/jqueryui/$version/jquery-ui";
@@ -61,10 +62,8 @@ sub fetch {
 
         my $min = s/(?<=\d)?min\b//i;
 
-        s/\b([\d\.\- ]+)\b//; my $version = $1;
-        $version = 1 unless defined $version && length $version;
-        s/^\s*//, s/\s*$// for $version;
-        $version =~ s/[\.\- ]+/\./g; # Normalize version
+        my $version;
+        ( $_, $version ) = parse_digitdot_version $_;
 
         die "Do not know how to flit jquery target ($target)" if m/[^- ]+/;
 
@@ -76,22 +75,33 @@ sub fetch {
     }
     elsif ( s/^\s*prototype[-\s]*// ) {
 
-        s/\b([\d\.\- ]+)\b//; my $version = $1;
-        $version = 1 unless defined $version && length $version;
-        s/^\s*//, s/\s*$// for $version;
-        $version =~ s/[\.\- ]+/\./g; # Normalize version
+        my $version;
+        ( $_, $version ) = parse_digitdot_version $_;
 
-        if ( $version eq '1' ) {
-        }
-        elsif ( $version =~ m/^1\.[6](?:\.[01])?$/ ) {
-        }
-        elsif ( grep { $version eq $_ } qw/ 1.6.0.2 1.6.0.3 1.6.1.0 / ) {
-        }
+        if ( $version eq '1' ) {}
+        elsif ( $version =~ m/^1\.[6](?:\.[01])?$/ ) {}
+        elsif ( grep { $version eq $_ } qw/ 1.6.0.2 1.6.0.3 1.6.1.0 / ) {}
         else {
             die "Do not know hot to flit prototype target ($target) for version ($version)";
         }
 
         my $uri = "http://ajax.googleapis.com/ajax/libs/prototype/$version/prototype.js";
+    
+        fetch $uri;
+    }
+    elsif ( s/^\s*script\.?aculo\,?us[-\s]*// ) {
+
+        my $version;
+        ( $_, $version ) = parse_digitdot_version $_;
+
+        if ( $version eq '1' ) {}
+        elsif ( $version =~ m/^1\.[8]$/ ) {}
+        elsif ( grep { $version eq $_ } qw/ 1.8.1 1.8.2 1.8.3 / ) {}
+        else {
+            die "Do not know hot to flit prototype target ($target) for version ($version)";
+        }
+
+        my $uri = "http://ajax.googleapis.com/ajax/libs/scriptaculous/$version/scriptaculous.js";
     
         fetch $uri;
     }
