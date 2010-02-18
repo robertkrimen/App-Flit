@@ -68,25 +68,30 @@ sub fetch {
 
         die "Do not know how to flit jquery target ($target)" if m/[^- ]+/;
 
-        if ( $version eq '1' ) {
-        }
-        elsif ( $version =~ m/^1\.[234]$/ ) {
-        }
-        elsif ( grep { $version eq $_ } qw/ 1.2.3 1.2.6 1.3.0 1.3.1 1.3.2 1.4.0 1.4.1 1.4.2 / ) {
-        }
-        else {
-            die "Do not know hot to flit jquery target ($target) for version ($version)";
-        }
-
-        if (0) {
-        warn "Flit jquery\n";
-        warn "min\n" if $min;
-        warn "version: $version\n";
-        }
-
         my $uri = "http://ajax.googleapis.com/ajax/libs/jquery/$version/jquery";
         $uri .= ".min" if $min;
         $uri .= ".js";
+    
+        fetch $uri;
+    }
+    elsif ( s/^\s*prototype[-\s]*// ) {
+
+        s/\b([\d\.\- ]+)\b//; my $version = $1;
+        $version = 1 unless defined $version && length $version;
+        s/^\s*//, s/\s*$// for $version;
+        $version =~ s/[\.\- ]+/\./g; # Normalize version
+
+        if ( $version eq '1' ) {
+        }
+        elsif ( $version =~ m/^1\.[6](?:\.[01])?$/ ) {
+        }
+        elsif ( grep { $version eq $_ } qw/ 1.6.0.2 1.6.0.3 1.6.1.0 / ) {
+        }
+        else {
+            die "Do not know hot to flit prototype target ($target) for version ($version)";
+        }
+
+        my $uri = "http://ajax.googleapis.com/ajax/libs/prototype/$version/prototype.js";
     
         fetch $uri;
     }
