@@ -36,6 +36,7 @@ sub parse_digitdot_version {
     if ( 0 ) {
     }
     elsif ( s/^\s*jquery-*ui[-\s]*// ) {
+
         my $min = s/(?<=\d)?min\b//i;
 
         my $version;
@@ -102,6 +103,27 @@ sub parse_digitdot_version {
         }
 
         my $uri = "http://ajax.googleapis.com/ajax/libs/scriptaculous/$version/scriptaculous.js";
+    
+        fetch $uri;
+    }
+    elsif ( s/^\s*mootools\s*// ) {
+
+        my $min = s/(?<=\d)?min\b//i;
+        $min ||= s/(?<=\d)?yui-compressed\b//i;
+
+        my $version;
+        ( $_, $version ) = parse_digitdot_version $_;
+
+        if ( $version eq '1' ) {}
+        elsif ( $version =~ m/^1\.[12]$/ ) {}
+        elsif ( grep { $version eq $_ } qw/ 1.1.1 1.1.2 1.2.1 1.2.2 1.2.3 1.2.4 / ) {}
+        else {
+            die "Do not know hot to flit mootools target ($target) for version ($version)";
+        }
+
+        my $uri = "http://ajax.googleapis.com/ajax/libs/mootools/$version/mootools";
+        $uri .= "-yui-compressed" if $min;
+        $uri .= ".js";
     
         fetch $uri;
     }
