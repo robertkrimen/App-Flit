@@ -1,28 +1,19 @@
-#!/usr/bin/env perl
+package App::Flit;
 
-use strict;
 use warnings;
+use strict;
 
-use LWP::UserAgent;
-use App::Flit;
+=head1 NAME
 
-my $agent = LWP::UserAgent->new;
+App::Flit -
 
-my $target = join ' ', @ARGV;
+=head1 VERSION
 
-die "No target to flit" unless $target;
+Version 0.01
 
-sub fetch {
-    my $uri = shift;
-    my $response = $agent->get( $uri );
+=cut
 
-    die "Unable to get URI ($uri)" unless $response->is_success;
-    print $response->content;
-}
-
-fetch( App::Flit->target2uri( $target ) );
-
-__END__
+our $VERSION = '0.01';
 
 sub parse_digitdot_version {
     local $_ = shift;
@@ -50,11 +41,14 @@ sub check_version {
     return 1;
 }
 
-{
+sub target2uri {
+    my $self = shift;
+    my $target = shift;
+
     local $_ = $target;
-    if ( 0 ) {
-    }
-    elsif ( s/^\s*jquery-*ui[-\s]*// ) {
+
+    my $uri;
+    if ( s/^\s*jquery-*ui[-\s]*// ) {
 
         my $min = s/(?<=\d)?min\b//i;
 
@@ -70,11 +64,9 @@ sub check_version {
             die "Do not know hot to flit jquery ui target ($target) for version ($version)";
         }
 
-        my $uri = "http://ajax.googleapis.com/ajax/libs/jqueryui/$version/jquery-ui";
+        $uri = "http://ajax.googleapis.com/ajax/libs/jqueryui/$version/jquery-ui";
         $uri .= ".min" if $min;
         $uri .= ".js";
-    
-        fetch $uri;
     }
     elsif ( s/^\s*jquery[-\s]*// ) {
 
@@ -87,11 +79,9 @@ sub check_version {
 
         die "Do not know how to flit jquery target ($target)" if m/[^- ]+/;
 
-        my $uri = "http://ajax.googleapis.com/ajax/libs/jquery/$version/jquery";
+        $uri = "http://ajax.googleapis.com/ajax/libs/jquery/$version/jquery";
         $uri .= ".min" if $min;
         $uri .= ".js";
-    
-        fetch $uri;
     }
     elsif ( s/^\s*prototype[-\s]*// ) {
 
@@ -105,9 +95,7 @@ sub check_version {
             die "Do not know hot to flit prototype target ($target) for version ($version)";
         }
 
-        my $uri = "http://ajax.googleapis.com/ajax/libs/prototype/$version/prototype.js";
-    
-        fetch $uri;
+        $uri = "http://ajax.googleapis.com/ajax/libs/prototype/$version/prototype.js";
     }
     elsif ( s/^\s*script\.?aculo\,?us[-\s]*// ) {
 
@@ -121,9 +109,7 @@ sub check_version {
             die "Do not know hot to flit prototype target ($target) for version ($version)";
         }
 
-        my $uri = "http://ajax.googleapis.com/ajax/libs/scriptaculous/$version/scriptaculous.js";
-    
-        fetch $uri;
+        $uri = "http://ajax.googleapis.com/ajax/libs/scriptaculous/$version/scriptaculous.js";
     }
     elsif ( s/^\s*mootools\s*// ) {
 
@@ -140,13 +126,74 @@ sub check_version {
             die "Do not know hot to flit mootools target ($target) for version ($version)";
         }
 
-        my $uri = "http://ajax.googleapis.com/ajax/libs/mootools/$version/mootools";
+        $uri = "http://ajax.googleapis.com/ajax/libs/mootools/$version/mootools";
         $uri .= "-yui-compressed" if $min;
         $uri .= ".js";
-    
-        fetch $uri;
     }
     else {
         die "Do not know how to flit target ($target)";
     }
+
+    return $uri;
+
 }
+=head1 AUTHOR
+
+Robert Krimen, C<< <rkrimen at cpan.org> >>
+
+=head1 BUGS
+
+Please report any bugs or feature requests to C<bug-app-flit at rt.cpan.org>, or through
+the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-Flit>.  I will be notified, and then you'll
+automatically be notified of progress on your bug as I make changes.
+
+
+
+
+=head1 SUPPORT
+
+You can find documentation for this module with the perldoc command.
+
+    perldoc App::Flit
+
+
+You can also look for information at:
+
+=over 4
+
+=item * RT: CPAN's request tracker
+
+L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=App-Flit>
+
+=item * AnnoCPAN: Annotated CPAN documentation
+
+L<http://annocpan.org/dist/App-Flit>
+
+=item * CPAN Ratings
+
+L<http://cpanratings.perl.org/d/App-Flit>
+
+=item * Search CPAN
+
+L<http://search.cpan.org/dist/App-Flit/>
+
+=back
+
+
+=head1 ACKNOWLEDGEMENTS
+
+
+=head1 COPYRIGHT & LICENSE
+
+Copyright 2010 Robert Krimen.
+
+This program is free software; you can redistribute it and/or modify it
+under the terms of either: the GNU General Public License as published
+by the Free Software Foundation; or the Artistic License.
+
+See http://dev.perl.org/licenses/ for more information.
+
+
+=cut
+
+1; # End of App::Flit
