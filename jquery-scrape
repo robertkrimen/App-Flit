@@ -1,0 +1,82 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use LWP::UserAgent;
+use WWW::Mechanize;
+use HTML::TreeBuilder;
+use Path::Class;
+use JSON; my $json = JSON->new;
+
+my $agent = WWW::Mechanize->new;
+my $tree = HTML::TreeBuilder->new;
+
+# http://plugins.jquery.com/project/Plugins/category/53
+# http://plugins.jquery.com/project/Plugins/name
+
+my $file;
+$file = 'all.example.html';
+$file = 'data.example.html';
+$tree->parse_file( $file );
+my @project_table = map { $_->parent } $tree->look_down(qw/ _tag table class releases /);
+
+sub abort ($$) {
+    my ( $el, $message ) = @_;
+    warn $el->as_HTML;
+    warn "\n$message\n";
+    exit 1;
+}
+
+sub abort_project ($$$) {
+    my ( $project, $el, $message ) = @_;
+    abort $el, "$message in project $project->{title} ($project->{name})";
+}
+
+my @projects;
+for my $project_el (@project_table) {
+
+    my %project;
+
+    eval {
+
+        my $title_el = $project_el->look_down(qw/ _tag a /);
+        my $title = $title_el->as_text;
+        my $name = $title_el->attr( 'href' );
+        $name =~ s/\/project\///g;
+
+        $project{title} = $title;
+        $project{name} = $name;
+
+        my @release_table = $project_el->look_down(qw/ _tag tr /);
+
+        my @releases;
+        for my $release_el (@release_table) {
+
+            eval {
+                my @release_detail = $release_el->look_down(qw/ _tag td /);
+
+                return unless $release_detail[0];
+
+                my ( $title, $date );
+                $title = $release_detail[0]->as_text;
+                $date = $release_detail[1]->as_text;
+                my $download =
+                    $release_el->look_down(qw/ _tag a class project_release_download /);
+                return unless $download;
+                $download = $download->attr( 'href' );
+
+                push @releases, { title => $title, date => $date, download => $download };
+            };
+            abort_project \%project, $release_el, $@ if $@;
+        }
+        $project{releases} = \@releases if @releases;
+    };
+    abort $project_el, $@ if $@;
+
+    push @projects, \%project if 0 || $project{releases};
+}
+
+print $json->encode( \@projects );
+
+1;
