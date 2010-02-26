@@ -16,9 +16,10 @@ my $tree = HTML::TreeBuilder->new;
 # http://plugins.jquery.com/project/Plugins/name
 
 my $file;
-$file = 'all.example.html';
 $file = 'data.example.html';
+$file = 'all.example.html';
 $tree->parse_file( $file );
+
 my @project_table = map { $_->parent } $tree->look_down(qw/ _tag table class releases /);
 
 sub abort ($$) {
@@ -77,6 +78,6 @@ for my $project_el (@project_table) {
     push @projects, \%project if 0 || $project{releases};
 }
 
-print $json->encode( \@projects );
+print $json->encode( \@projects ), "\n";
 
 1;

@@ -1,0 +1,47 @@
+#!/usr/bin/perl -w
+
+use strict;
+use warnings;
+
+use DBIx::SQLite::Deploy;
+use DBIx::Simple;
+use JSON; my $json = JSON->new;
+use Path::Class;
+
+my $schema_file = 'database.sqlite';
+
+my $deploy = DBIx::SQLite::Deploy->deploy( $schema_file => <<_END_ );
+[% PRIMARY_KEY = "INTEGER PRIMARY KEY AUTOINCREMENT" %]
+[% CLEAR %]
+---
+CREATE TABLE project (
+    id          [% PRIMARY_KEY %],
+
+    name        TEXT,
+    title       TEXT,
+
+    UNIQUE (name)
+)
+_END_
+
+my $db;
+sub db {
+    return $db ||= DBIx::Simple->new( $deploy->information );
+}
+
+unless( -s $schema_file ) {
+    $deploy->deploy;
+    my @projects = @{ $json->decode( scalar file( 'jquery-plugin-database.json' )->slurp ) };
+    db->begin_work;
+    for my $project (@projects) {
+        db->insert( 'project', { map { $_ => $project->{$_} } qw/ name title / } );
+    }
+    db->commit;
+}
+
+{
+    my $result = db->query( 'SELECT name, title FROM PROJECT ORDER BY name' );
+    while (my $row = $result->hash) {
+        print "$row->{name} - $row->{title}\n";
+    }
+}
