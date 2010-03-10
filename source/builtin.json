@@ -1,0 +1,11 @@
+[
+    {
+        "name" : "jquery",
+        "kind" : "google-ajax-library",
+    },
+    {
+        "name" : "jquery-ui",
+        "kind" : "google-ajax-library",
+    },
+]
+

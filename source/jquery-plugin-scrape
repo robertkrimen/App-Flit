@@ -7,7 +7,7 @@ use LWP::UserAgent;
 use WWW::Mechanize;
 use HTML::TreeBuilder;
 use Path::Class;
-use JSON; my $json = JSON->new;
+use JSON; my $json = JSON->new->pretty( 1 );
 
 my $agent = WWW::Mechanize->new;
 my $tree = HTML::TreeBuilder->new;

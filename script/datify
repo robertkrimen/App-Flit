@@ -1,0 +1,45 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use JSON; my $json = JSON->new->relaxed;
+use Path::Class;
+use Data::Dumper::Concise;
+
+sub _usage (;$) {
+    my $message = shift;
+
+    print <<_END_;
+Usage: $0 <package> <file>
+_END_
+
+    print <<_END_ if $message;
+
+$message
+_END_
+
+    exit( $message ? -1 : 0 );
+}
+
+my $package = shift @ARGV;
+_usage "Missing package argument" unless $package;
+
+my $file = shift @ARGV;
+_usage "Missing file argument" unless $file;
+_usage "Bad file ($file)" unless -s $file && -r _;
+$file = file $file;
+
+my $data = $file->slurp;
+$data = $json->decode( $data ) or _usage "Unable to read data from file ($file)";
+
+print <<_END_;
+package App::Flit::Source::${package}::Data;
+
+sub data {
+
+@{[ Dumper( $data ) ]}
+}
+
+1;
+_END_

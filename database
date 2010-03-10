@@ -42,6 +42,6 @@ unless( -s $schema_file ) {
 {
     my $result = db->query( 'SELECT name, title FROM PROJECT ORDER BY name' );
     while (my $row = $result->hash) {
-        print "$row->{name} - $row->{title}\n";
+        print "jquery.$row->{name} - $row->{title}\n";
     }
 }
