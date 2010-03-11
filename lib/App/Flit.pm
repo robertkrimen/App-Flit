@@ -18,7 +18,7 @@ our $VERSION = '0.01';
 sub parse_digitdot_version {
     local $_ = shift;
 
-    s/\b([\d\.\- ]+)\b//; my $version = $1;
+    s/\b([\d\.\- ]+)\d//; my $version = $1;
     $version = 1 unless defined $version && length $version;
     s/^\s*//, s/\s*$// for $version;
     $version =~ s/[\.\- ]+/\./g; # Normalize version
@@ -77,7 +77,8 @@ sub target2uri {
         my $version;
         ( $_, $version ) = parse_digitdot_version $_;
 
-        die "Do not know how to flit jquery target ($target)" if m/[^- ]+/;
+#        die "Do not know how to flit jquery target ($target)" if m/[^- ]+/;
+        goto OTHERWISE if m/[^- ]+/;
 
         $uri = "http://ajax.googleapis.com/ajax/libs/jquery/$version/jquery";
         $uri .= ".min" if $min;
@@ -131,12 +132,49 @@ sub target2uri {
         $uri .= ".js";
     }
     else {
-        die "Do not know how to flit target ($target)";
+OTHERWISE:
+        local $_ = $target;
+
+        my $version;
+        ( $_, $version ) = parse_digitdot_version $_;
+        
+        my $name = $_;
+        my @found = grep { $_->{name} eq $name } $self->find( $_ );
+
+        die "Nothing found for target ($_)" unless @found;
+
+        if ( @found == 1 ) {
+            $uri = $found[0]->{releases}->[0]->{download};
+        }
+        else {
+            die "Be more specific.\n";
+        }
     }
+
+    die "Do not know how to flit target ($target)" unless $uri;
 
     return $uri;
 
 }
+
+sub find {
+    my $self = shift;
+    my $query = shift;
+
+    die "Missing query" unless defined $query;
+
+    $query = qr/$query/ unless ref $query eq 'Regexp';
+
+#    require App::Flit::Source::builtin;
+    require App::Flit::Source::jquery;
+
+    my @data;
+#    push @data, @{ App::Flit::Source::bultin->data };
+    push @data, @{ App::Flit::Source::jquery->data };
+
+    return grep { $_->{name} =~ $query } @data;
+}
+
 =head1 AUTHOR
 
 Robert Krimen, C<< <rkrimen at cpan.org> >>

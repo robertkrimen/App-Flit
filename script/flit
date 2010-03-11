@@ -8,10 +8,6 @@ use App::Flit;
 
 my $agent = LWP::UserAgent->new;
 
-my $target = join ' ', @ARGV;
-
-die "No target to flit" unless $target;
-
 sub fetch {
     my $uri = shift;
     my $response = $agent->get( $uri );
@@ -20,7 +16,26 @@ sub fetch {
     print $response->content;
 }
 
-fetch( App::Flit->target2uri( $target ) );
+die "Missing query or target" unless @ARGV;
+
+my $argument = join ' ', @ARGV;
+
+if ( ( my $query = $argument ) =~ s/^%// ) {
+    my @found = App::Flit->find( $query );
+    if ( @found ) {
+        for my $project (@found) {
+            print "$project->{name} - $project->{title}\n";
+        }
+    }
+    else {
+        print "Nothing found for \"$query\"\n";
+    }
+}
+else {
+
+    fetch( App::Flit->target2uri( $argument ) );
+
+}
 
 __END__
 

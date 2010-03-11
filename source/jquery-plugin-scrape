@@ -16,8 +16,8 @@ my $tree = HTML::TreeBuilder->new;
 # http://plugins.jquery.com/project/Plugins/name
 
 my $file;
-$file = 'data.example.html';
-$file = 'all.example.html';
+$file = 'jquery.some.html';
+$file = 'jquery.all.html';
 $tree->parse_file( $file );
 
 my @project_table = map { $_->parent } $tree->look_down(qw/ _tag table class releases /);
@@ -45,6 +45,8 @@ for my $project_el (@project_table) {
         my $title = $title_el->as_text;
         my $name = $title_el->attr( 'href' );
         $name =~ s/\/project\///g;
+        $name =~ s/^jquery\W*//;
+        $name = "jquery-$name";
 
         $project{title} = $title;
         $project{name} = $name;

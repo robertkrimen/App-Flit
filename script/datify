@@ -38,7 +38,7 @@ package App::Flit::Source::${package}::Data;
 
 sub data {
 
-@{[ Dumper( $data ) ]}
+@{[ Dumper( [ sort { $a->{name} cmp $b->{name} } @$data ] ) ]}
 }
 
 1;
