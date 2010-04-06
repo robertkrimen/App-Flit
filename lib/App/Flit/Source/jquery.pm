@@ -9,4 +9,10 @@ sub data {
     return App::Flit::Source::jquery::Data->data;
 }
 
+my $index;
+sub index {
+    my $self = shift;
+    return $index ||= { map { $_->{name} => $_ } @{ $self->data } };
+}
+
 1;
