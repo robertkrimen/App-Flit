@@ -1,19 +1,8 @@
 package App::Flit;
+# ABSTRACT: -
 
 use warnings;
 use strict;
-
-=head1 NAME
-
-App::Flit -
-
-=head1 VERSION
-
-Version 0.01
-
-=cut
-
-our $VERSION = '0.01';
 
 sub parse_digitdot_version {
     local $_ = shift;
@@ -175,63 +164,4 @@ sub find {
     return grep { $_->{name} =~ $query } @data;
 }
 
-=head1 AUTHOR
-
-Robert Krimen, C<< <rkrimen at cpan.org> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-app-flit at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=App-Flit>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
-
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc App::Flit
-
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=App-Flit>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/App-Flit>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/App-Flit>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/App-Flit/>
-
-=back
-
-
-=head1 ACKNOWLEDGEMENTS
-
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2010 Robert Krimen.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
-
-
-=cut
-
-1; # End of App::Flit
+1;
