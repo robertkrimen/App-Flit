@@ -1,12 +1,12 @@
-package App::Flit::Source::jquery;
+package App::Flit::Source;
 
 use strict;
 use warnings;
 
-use App::Flit::Source::jquery::Data;
+use App::Flit::Source::Data;
 
 sub data {
-    return App::Flit::Source::jquery::Data->data;
+    return App::Flit::Source::Data->data;
 }
 
 my $index;

@@ -7,12 +7,13 @@ use Test::Most;
 
 plan qw/no_plan/;
 
-use App::Flit::Finder;
+use App::Flit::Index;
+my $index = App::Flit::Index->new();
 
-sub lookup ($$;$@) {
+sub find ($$;$@) {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     my ( $target, $project, $version ) = ( shift, shift, shift );
-    my $found = App::Flit::Finder->lookup( $target );
+    my $found = $index->find( $target );
     ok( $found ) or return;
     is( $project, $found->{project} );
     is( $version, $found->{version} ) if defined $version;
@@ -21,15 +22,17 @@ sub lookup ($$;$@) {
     }
 }
 
-lookup 'jquery', 'jquery';
-lookup 'jquery-x2s', 'jquery-x2s';
-lookup 'jquerymin', 'jquery', undef, compressed => 1;
-lookup 'jquery1', 'jquery', '1';
-lookup 'jquery1min', 'jquery', '1', compressed => 1;
-lookup 'jquery1.2min', 'jquery', '1.2', compressed => 1;
-lookup 'jquery-1.2min', 'jquery', '1.2', compressed => 1;
-lookup 'jquery-1.2.1min', 'jquery', '1.2.1', compressed => 1;
-lookup 'jquery-1.2.1-min', 'jquery', '1.2.1', compressed => 1;
+find 'jquery', 'jquery';
+find 'jquery-x2s', 'jquery-x2s';
+find 'jquerymin', 'jquery', undef, compressed => 1;
+find 'jquery1', 'jquery', '1';
+find 'jquery1min', 'jquery', '1', compressed => 1;
+find 'jquery1.2min', 'jquery', '1.2', compressed => 1;
+find 'jquery-1.2min', 'jquery', '1.2', compressed => 1;
+find 'jquery-1.2.1min', 'jquery', '1.2.1', compressed => 1;
+find 'jquery-1.2.1-min', 'jquery', '1.2.1', compressed => 1;
+
+ok( $index->has( 'jquery-ui' ) );
 
 __END__
 

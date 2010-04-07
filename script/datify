@@ -22,23 +22,28 @@ _END_
     exit( $message ? -1 : 0 );
 }
 
-my $package = shift @ARGV;
-_usage "Missing package argument" unless $package;
+#my $package = shift @ARGV;
+#_usage "Missing package argument" unless $package;
 
-my $file = shift @ARGV;
-_usage "Missing file argument" unless $file;
-_usage "Bad file ($file)" unless -s $file && -r _;
-$file = file $file;
+_usage "Missing file argument" unless @ARGV;
 
-my $data = $file->slurp;
-$data = $json->decode( $data ) or _usage "Unable to read data from file ($file)";
+my ( $file, @data );
+while( $file = shift @ARGV ) {
+    _usage "Bad file ($file)" unless -s $file && -r _;
+    $file = file $file;
+
+    my $data = $file->slurp;
+    $data = $json->decode( $data ) or _usage "Unable to read data from file ($file)";
+    push @data, @$data;
+
+}
 
 print <<_END_;
-package App::Flit::Source::${package}::Data;
+package App::Flit::Source::Data;
 
 sub data {
 
-@{[ Dumper( [ sort { $a->{name} cmp $b->{name} } @$data ] ) ]}
+@{[ Dumper( [ sort { $a->{name} cmp $b->{name} } @data ] ) ]}
 }
 
 1;

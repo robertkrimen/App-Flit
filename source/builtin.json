@@ -2,10 +2,27 @@
     {
         "name" : "jquery",
         "kind" : "google-ajax-library",
+        "default_version" : "1",
     },
     {
         "name" : "jquery-ui",
         "kind" : "google-ajax-library",
+        "default_version" : "1",
+    },
+    {
+        "name" : "prototype",
+        "kind" : "google-ajax-library",
+        "default_version" : "1",
+    },
+    {
+        "name" : "scriptaculous",
+        "kind" : "google-ajax-library",
+        "default_version" : "1",
+    },
+    {
+        "name" : "mootools",
+        "kind" : "google-ajax-library",
+        "default_version" : "1.2",
     },
 ]
 

@@ -1,7 +1,12 @@
-package App::Flit::Finder;
+package App::Flit::Index;
 
 use strict;
 use warnings;
+
+use Any::Moose;
+no Any::Moose;
+
+require App::Flit::Source;
 
 sub parse_digitdot_version {
     local $_ = shift;
@@ -30,7 +35,41 @@ sub check_version {
     return 1;
 }
 
-sub lookup {
+my %project;
+sub project {
+    my $self = shift;
+    my $name = shift;
+    my $project = $project{ $name };
+    return $project if $project;
+    $project = $self->_project( $name ) or die "Missing project ($name)";
+    my $class = $project->{kind};
+    if ( $class eq '::' ) {
+        $class = "$name";
+    }
+    elsif ( $class eq 'google-ajax-library' ) {
+        $class = 'GoogleAJAXLibrary';
+    }
+    elsif ( $class eq 'static' ) {
+        $class = 'Static';
+    }
+    $class = "App::Flit::Project::$class";
+    eval "require $class" or die $@;
+    return $project{ $name } = $class->load( %$project, source => $project );
+}
+
+sub _project {
+    my $self = shift;
+    my $name = shift;
+    return App::Flit::Source->index->{$name};
+}
+
+sub has {
+    my $self = shift;
+    my $name = shift;
+    return exists App::Flit::Source->index->{$name};
+}
+
+sub find {
     my $self = shift;
     my $target = shift;
 
@@ -61,9 +100,8 @@ sub lookup {
         $found{version} = $version;
 
         if ( $_ ) {
-            require App::Flit::Source::jquery;
             my $project = "jquery-$_";
-            $found{project} = $project if App::Flit::Source::jquery->index->{$project};
+            $found{project} = $project if $self->has( $project );
         }
         else {
             $found{project} = 'jquery';
@@ -100,6 +138,10 @@ sub lookup {
     }
 
     return \%found;
+}
+
+sub search {
+
 }
 
 1;

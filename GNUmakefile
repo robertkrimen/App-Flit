@@ -1,10 +1,13 @@
 .PHONY: all test build
 
+test:
+	prove t
+
 all: data test
 
 data:
-	./script/datify jquery source/jquery-plugin.json > lib/App/Flit/Source/jquery/Data.pm
-	./script/datify jquery source/builtin.json > lib/App/Flit/Source/builtin/Data.pm
+	./script/datify source/builtin.json source/jquery-plugin.json > \
+		lib/App/Flit/Source/Data.pm
 
-build test:
+build:
 	dzil $@

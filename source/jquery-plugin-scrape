@@ -50,6 +50,7 @@ for my $project_el (@project_table) {
 
         $project{title} = $title;
         $project{name} = $name;
+        $project{kind} = 'static';
 
         my @release_table = $project_el->look_down(qw/ _tag tr /);
 

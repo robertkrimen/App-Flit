@@ -1,8 +1,13 @@
-package App::Flit::Source::jquery::Data;
+package App::Flit::Source::Data;
 
 sub data {
 
 [
+  {
+    default_version => 1,
+    kind => "google-ajax-library",
+    name => "jquery"
+  },
   {
     name => "jquery-3srb",
     releases => [
@@ -18458,6 +18463,11 @@ sub data {
     title => "uGallery"
   },
   {
+    default_version => 1,
+    kind => "google-ajax-library",
+    name => "jquery-ui"
+  },
+  {
     name => "jquery-ui-checkbox",
     releases => [
       {
@@ -19444,6 +19454,21 @@ sub data {
       }
     ],
     title => "ZoomMap: Zoomable Interactive Designer Maps"
+  },
+  {
+    default_version => "1.2",
+    kind => "google-ajax-library",
+    name => "mootools"
+  },
+  {
+    default_version => 1,
+    kind => "google-ajax-library",
+    name => "prototype"
+  },
+  {
+    default_version => 1,
+    kind => "google-ajax-library",
+    name => "scriptaculous"
   }
 ]
 
